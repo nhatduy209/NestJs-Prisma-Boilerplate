@@ -12,15 +12,21 @@ export class AuthService {
     });
 
     if ((await user).password == authDto.password) {
-      access_token: this.jwtService.sign(user);
+      return {
+        access_token: this.jwtService.sign(await user),
+        user: await user,
+      };
     }
-
     return null;
   }
 
   async signUp(authDto: AuthDto) {
     const user = await this.prisma.user.create({
-      data: { email: authDto.email, password: authDto.password },
+      data: {
+        email: authDto.email,
+        password: authDto.password,
+        role: 'member',
+      },
     });
 
     return { message: 'Signed up', user };
